@@ -33,7 +33,14 @@ async fn main() -> miette::Result<()> {
     ));
 
     let ghci = Ghci::new(ghci_command).await?;
-    let watcher = cli::with_opts(|opts| Watcher::new(ghci, &opts.watch))?;
+    let watcher = cli::with_opts(|opts| {
+        Watcher::new(
+            ghci,
+            &opts.watch.paths,
+            opts.watch.debounce,
+            opts.watch.poll,
+        )
+    })?;
 
     watcher.handle.await.into_diagnostic()??;
 
